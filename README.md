@@ -1,2 +1,3 @@
 # Group calculator
- assignment for group
+ calculator in java with stack implementation
+ 
