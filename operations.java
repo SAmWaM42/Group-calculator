@@ -3,10 +3,11 @@ import java.util.Stack;
 
 public class operations {
 
-  String operators[] = { "+", "-", "x", "/" };
+  String operators[] = { "+", "-", "x", "/", "(", ")","^" };
+  String trig[] = { "sin", "cos", "tan","sqrt" };
 
   ArrayList<String> arithmetic = new ArrayList<String>();
-  int answer;
+  Double answer;
   ArrayList<String> integer = new ArrayList<String>();
   Stack<String> tempStack = new Stack<String>();
 
@@ -31,32 +32,72 @@ public class operations {
       return 3;
     } else if (s == "/") {
       return 4;
+    } else if (s == ")" || s == "(") {
+      return -1;
+    } else if (s == "sin" || s == "cos" || s == "tan" ||s== "sqrt"||s=="^") {
+      return 5;
     } else {
       return 0;
     }
 
   }
 
-  private int equal_to(String a, String b, String c) {
-    int ans = 0;
-
-    switch (a) {
+  private double equal_to(String a, String b, String c) {
+    Double ans = 0.0;
+  try
+ {   switch (a) {
       case "+":
-        ans = Integer.valueOf(c) + Integer.valueOf(b);
+        ans = Double.valueOf(c) + Double.valueOf(b);
         break;
       case "-":
 
-        ans = Integer.valueOf(c) - Integer.valueOf(b);
+        ans = Double.valueOf(c) - Double.valueOf(b);
         break;
       case "x":
 
-        ans = Integer.valueOf(c) * Integer.valueOf(b);
+        ans = Double.valueOf(c) * Double.valueOf(b);
         break;
       case "/":
-        ans = Integer.valueOf(c) / Integer.valueOf(b);
+        ans = Double.valueOf(c) / Double.valueOf(b);
+        break;
+      case "^":
+      ans=Math.pow(Double.valueOf(b),Double.valueOf(c));
+     
+      
+    }
+
+  }catch(Exception operation_Exception)
+  {
+    System.out.println("STNTAX ERROR");
+  }
+
+    return ans;
+  }
+
+  private double trig(String a, String b) {
+    double ans = 0;
+    try
+{    switch (a) {
+      case "sin":
+        ans = Math.sin(Math.toRadians(Double.valueOf(b)));
+        break;
+      case "cos":
+        ans = Math.cos(Math.toRadians(Double.valueOf(b)/57.2957795));
+        break;
+      case "tan":
+        ans = Math.tan(Math.toRadians(Double.valueOf(b)/57.2957795));
+        case "sqrt":
+        ans=Math.sqrt(Double.valueOf(b));
+       
         break;
 
+
     }
+  }
+  catch(Exception trigException)
+  {
+    System.out.println("syntax error");
+  }
     return ans;
   }
 
@@ -65,9 +106,17 @@ public class operations {
     arithmetic = array;
 
     for (int i = 0; i < arithmetic.size(); i++) {
-      if (!check(operators, arithmetic.get(i))) {
+
+      if (!check(operators, arithmetic.get(i)) && !check(trig, arithmetic.get(i))) {
         integer.add(arithmetic.get(i));
 
+      } else if (arithmetic.get(i) == "(") {
+        tempStack.push(arithmetic.get(i));
+      } else if (arithmetic.get(i) == ")") {
+        while (!tempStack.isEmpty() && tempStack.peek() != "(") {
+          integer.add(tempStack.pop());
+        }
+        tempStack.pop();
       } else {
         if (tempStack.empty()) {
           tempStack.push(arithmetic.get(i));
@@ -79,44 +128,53 @@ public class operations {
           tempStack.push(arithmetic.get(i));
 
         }
-      }
 
-      
+      }
 
     }
 
     while (!tempStack.isEmpty()) {
       integer.add(tempStack.pop());
     }
-    for (int i = 0; i < arithmetic.size(); i++) {
+    for (int i = 0; i < integer.size(); i++) {
 
-      if (!check(operators, integer.get(i))) {
+      if (!check(operators, integer.get(i)) && !check(trig, integer.get(i))) {
         tempStack.push(integer.get(i));
       } else {
-        String num1 = tempStack.pop();
-        String num2 = tempStack.pop();
+        if (check(trig, integer.get(i))) {
 
-        tempStack.push(Integer.toString(equal_to(integer.get(i), num2, num1)));
+          String num1 = tempStack.pop();
+          tempStack.push(Double.toString(trig(integer.get(i), num1)));
+          tempStack.peek();
+        } else {
+          String num1 = tempStack.pop();
+          String num2 = tempStack.pop();
+          tempStack.push(Double.toString(equal_to(integer.get(i), num2, num1)));
+        }
 
       }
 
     }
 
     if (tempStack.size() == 1) {
-      answer = Integer.valueOf(tempStack.pop());
+      answer = Double.valueOf(tempStack.pop());
     }
   }
 
-  public static void main(String[] args) {
+ /*  public static void main(String[] args) {
     ArrayList<String> test = new ArrayList<String>();
-    test.add("23");
+    test.add("tan");
+    test.add("23.56");
     test.add("+");
+    test.add("(");
     test.add("40");
     test.add("x");
     test.add("40");
+    test.add(")");
 
     operations operations = new operations(test);
     System.out.println(operations.answer);
-  }
 
+  }
+*/
 }
