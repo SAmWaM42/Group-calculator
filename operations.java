@@ -43,7 +43,7 @@ public class operations {
 
   }
 
-  private double equal_to(String a, String b, String c) {
+  private double equal_to(String a, String c, String b) {
     Double ans = 0.0;
   try
  {   switch (a) {
