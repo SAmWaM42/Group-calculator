@@ -4,7 +4,7 @@ import java.util.Stack;
 public class operations {
   boolean error;
   String operators[] = { "+", "-", "x", "/", "(", ")","^" };
-  String trig[] = { "sin", "cos", "tan","sqrt","!","log","e","1/","asin","acos","atan","pi"};
+  String trig[] = { "sin", "cos", "tan","sqrt","!","log","1/","asin","acos","atan","pi"};
 
   ArrayList<String> arithmetic = new ArrayList<String>();
   Double answer;
@@ -34,7 +34,7 @@ public class operations {
       return 4;
     } else if (s == ")" || s == "(") {
       return -1;
-    } else if (s == "sin" || s == "cos" || s == "tan" ||s== "sqrt"||s=="^" ||s=="log"||s=="1/"||s=="!"||s=="e"
+    } else if (s == "sin" || s == "cos" || s == "tan" ||s== "sqrt"||s=="^" ||s=="log"||s=="1/"||s=="!"
     ||s=="asin" || s=="acos" || s =="atan" ) {
       return 5;
     } else {
@@ -62,14 +62,16 @@ public class operations {
         ans = Double.valueOf(c) / Double.valueOf(b);
         break;
       case "^":
-      ans=Math.pow(Double.valueOf(b),Double.valueOf(c));
+      ans=Math.pow(Double.valueOf(c),Double.valueOf(b));
+      break;
+
      
       
     }
 
   }catch(Exception operation_Exception)
   {
-    System.out.println("STNTAX ERROR");
+    System.out.println("SYNTAX ERROR");
   }
 
     return ans;
@@ -83,10 +85,11 @@ public class operations {
         ans = Math.sin(Math.toRadians(Double.valueOf(b)));
         break;
       case "cos":
-        ans = Math.cos(Math.toRadians(Double.valueOf(b)/57.2957795));
+        ans = Math.cos(Math.toRadians(Double.valueOf(b)));
         break;
       case "tan":
-        ans = Math.tan(Math.toRadians(Double.valueOf(b)/57.2957795));
+        ans = Math.tan(Math.toRadians(Double.valueOf(b)));
+        break;
         case "sqrt":
         ans=Math.sqrt(Double.valueOf(b));
         break;
@@ -102,11 +105,8 @@ public class operations {
         case "1/":
         ans=1/Double.valueOf(b);
         break;
-        case "e":
-        ans= Math.exp(Double.valueOf(b));
-        break;
         case "asin":
-        ans = Math.asin(Math.toRadians((Double.valueOf(b))));
+        ans = Math.asin(Math.toRadians(Double.valueOf(b)));
         break;
         case "acos":
         ans = Math.acos(Math.toRadians((Double.valueOf(b))));
@@ -134,7 +134,7 @@ public class operations {
     
 
     for (int i = 0; i < arithmetic.size(); i++) {
-   
+   //conversion post fix 
       
       if (!check(operators, arithmetic.get(i)) && !check(trig, arithmetic.get(i)) ) {
         integer.add(arithmetic.get(i));
@@ -161,7 +161,7 @@ public class operations {
       }
 
     }
-
+//evaluation
     while (!tempStack.isEmpty()) {
       integer.add(tempStack.pop());
     }
@@ -192,16 +192,16 @@ public class operations {
       answer = Double.valueOf(tempStack.pop());
     }
   }
-
  /*public static void main(String[] args) {
     ArrayList<String> test = new ArrayList<String>();
-    test.add("pi");
+    test.add("3");
     test.add("x");
+    test.add("tan");
     test.add("45");
 
     operations operations = new operations(test);
     System.out.println(operations.answer);
 
-  }*/
+ }*/
 
 }

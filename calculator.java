@@ -16,14 +16,18 @@ public class calculator implements ActionListener {
     JPanel pane_text;
     JPanel pane_numb;
     JTextField writing_pane;
-    String number_text[] = { "1", "2", "3", "+", "C","^","!","asin", "4", "5", "6", "-", "sin","(","1/","atan", "7", "8", "9", "x", "tan",")","log","acos","0", "=", ".", "/", "cos","sqrt","e","pi" };
-    String operators[] = { "+", "-", "x", "/","tan","sin","cos","^","sqrt","(",")","!","log","e","1/","asin","atan,acos","pi"};
+    String number_text[] = { "1", "2", "3","", "+", "C","^","!","asin",
+                             "4", "5", "6","", "-", "sin","(","1/","atan",
+                             "7", "8", "9","", "x", "tan",")","log","acos",
+                             "0", "=", "rad",".", "/", "cos","sqrt","E","pi" };
+    String operators[] = { "+", "-", "x", "/","tan","sin","cos","^","sqrt","(",")","!","log","e","1/","asin","atan,acos","pi","rad"};
     String operator_check[]={ "+", "-", "x", "/"};
+    String special_op[]={"tan","sin","cos","asin","atan","acos","pi","E","rad"};
     // add remove button and special buttons
     int numbers[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
     String int_check[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
     ArrayList<String> token = new ArrayList<String>();
-    JButton number_button[] = new JButton[32];
+    JButton number_button[] = new JButton[36];
     double final_ans;
     double memory;
     int multiplier_x = 0;
@@ -32,6 +36,7 @@ public class calculator implements ActionListener {
     boolean display_clear = false;
 
     public calculator() {
+        //UI creation
         Color norm_buttonColor=new Color(80,58,37,255);
         Color oper_buttonColor=new Color(241,175,96,255);
         Color Back_Color=new Color(27,28,30,255);
@@ -40,7 +45,7 @@ public class calculator implements ActionListener {
          c.setBackground(Back_Color);
         frame.setVisible(true);
         pane_text = new JPanel(new GridLayout(1, 1));
-        pane_numb = new JPanel(new GridLayout(4, 7));
+        pane_numb = new JPanel(new GridLayout(4, 9));
         pane_text.setSize(frame.getWidth(), 30);
         pane_numb.setSize(frame.getWidth(), frame.getHeight() - pane_text.getHeight());
         int x = frame.getWidth();
@@ -58,7 +63,7 @@ public class calculator implements ActionListener {
   
         int m = 0;
 
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 36; i++) {
 
             number_button[i] = new JButton(number_text[m]);
             number_button[i].setSize(40, 40);
@@ -116,20 +121,26 @@ public class calculator implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+        //screen clearing upon entering another sum
         if (display_clear == true) {
             writing_pane.setText(null);
             display_clear = false;
         }
+        //memory of last answer
         if (memory != 0 ) {
-            
-            token.add(Double.toString(memory));
-            writing_pane.setText(writing_pane.getText().concat("ANS"));
-            memory = 0;
+             for(int i = 0; i < 36; i++)
+             {
+                if(source==number_button[i] && check(special_op,number_text[i]) && token.size()==0)
+         {       token.add(Double.toString(memory));
+                 writing_pane.setText(writing_pane.getText().concat("ANS"));
+                  memory = 0;
+         }
+             }
            
         }
-        for (int i = 0; i < 32; i++) {
-
-            if (source == number_button[i] && number_text[i] != "=" && number_text[i] != "del" && number_text[i]!="C")
+        for (int i = 0; i < 36; i++) {
+//input handling and storage in array list
+            if (source == number_button[i] && number_text[i] != "=" && number_text[i] != "del" && number_text[i]!="C" && number_text[i]!="rad")
             {
 
                 writing_pane.setText(writing_pane.getText().concat(number_text[i]));
@@ -148,7 +159,7 @@ public class calculator implements ActionListener {
               else {
                     token.add(number_text[i]);
                 }
-                  
+                  //managing of special cases like brackets and constants
                 if(token.size()>0 && check_int(token.getLast()))
                 {
                     if(token.size()==2)
@@ -194,45 +205,66 @@ public class calculator implements ActionListener {
                     }
 
                 }
+                if(token.size()>=2 && check(special_op,token.getLast()) && check_int(token.get(token.size()-2)))
+                {
+                    String add=token.getLast();
+                    token.removeLast();
+                    token.add("x");
+                    token.add(add);
+         
+                }
                 if(token.getLast()=="pi")
                 {
                     token.removeLast();
                     token.add(Double.toString(Math.PI));
                     
                 }
-               System.out. println(token);
+                if(token.getLast()=="E")
+                {
+                    token.removeLast();
+                    token.add(Double.toString(Math.E));
+    
+                }
+                
+    
+                
+              System.out.println(token);
 
             }
+
             
         
         }
-        if (source == number_button[4]) {
+        //clear  button
+        if (source == number_button[5]) {
             token.clear();
             writing_pane.setText(" ");
             
         }
-        
-        if (source == number_button[25]) {
+         //solution button
+        if (source == number_button[28]) {
             operations operations = new operations(token);
-            if(operations.error)
-          {  writing_pane.setText("SYNTAX ERROR");}
-          else
-          {  try
-           { final_ans = operations.answer;}
-           catch(Exception b)
-           {
-            writing_pane.setText("SYNTAX ERROR");
-           }
+      
+ 
+           final_ans = operations.answer;
             memory = final_ans;
             writing_pane.setText(Double.toString(final_ans));
             token.clear();
             display_clear = true;
 
         }
+        if(source==number_button[29])
+        {
+                   String S=token.getLast();
+                    token.removeLast();
+                    token.add(Double.toString(Math.toRadians(Double.valueOf(S))));
+                    writing_pane.setText(token.getLast());
+
+        }
 
        
     }
-    }
+    
 
     public static void main(String[] args)
 
