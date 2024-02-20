@@ -22,6 +22,7 @@ public class calculator implements ActionListener {
                              "0", "=", "rad",".", "/", "cos","sqrt","E","pi" };
     String operators[] = { "+", "-", "x", "/","tan","sin","cos","^","sqrt","(",")","!","log","e","1/","asin","atan,acos","pi","rad"};
     String operator_check[]={ "+", "-", "x", "/"};
+    String ans_check[]={ "+", "-", "x", "/","^"};
     String special_op[]={"tan","sin","cos","asin","atan","acos","pi","E","rad"};
     // add remove button and special buttons
     int numbers[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -130,7 +131,7 @@ public class calculator implements ActionListener {
         if (memory != 0 ) {
              for(int i = 0; i < 36; i++)
              {
-                if(source==number_button[i] && check(special_op,number_text[i]) && token.size()==0)
+                if(source==number_button[i] && check(operator_check,number_text[i]) && token.size()==0)
          {       token.add(Double.toString(memory));
                  writing_pane.setText(writing_pane.getText().concat("ANS"));
                   memory = 0;
@@ -162,13 +163,21 @@ public class calculator implements ActionListener {
                   //managing of special cases like brackets and constants
                 if(token.size()>0 && check_int(token.getLast()))
                 {
-                    if(token.size()==2)
+                    if(token.size()>=2)
                     {
                         if(token.get(token.size()-2)=="-")
                         {
                              token.add(token.get(token.size()-2).concat(token.getLast()));
                              token.remove(token.get(token.size()-3));
                              token.remove(token.get(token.size()-2));
+                             if(Double.valueOf(token.getLast())<0)
+                             {
+                                String  s=token.getLast();
+                                token.removeLast();
+                                token.add("+");
+                                token.add(s);
+
+                             }
                         }
 
                     }
@@ -224,6 +233,22 @@ public class calculator implements ActionListener {
                     token.removeLast();
                     token.add(Double.toString(Math.E));
     
+                }
+                if(check(special_op, token.getLast()) && token.size()>=3)
+                {   if(check_int(token.get(token.size()-3)) && token.get(token.size()-2)=="-" )
+                    {  
+                    String num=token.get(token.size()-3);
+                     String special=token.getLast();
+                      token.add(num);
+                      token.add("+");
+                      token.add("-1");
+                      token.add("x");
+                      token.add(special);
+                      token.remove(token.size()-8);
+                      token.remove(token.size()-7);
+                      token.remove(token.size()-6);
+
+                    }
                 }
                 
     
