@@ -43,6 +43,7 @@ public class calculator implements ActionListener {
         Color Back_Color=new Color(27,28,30,255);
         frame = new JFrame("Calculator");
         Container c =frame.getContentPane();
+        c.setForeground(Color.GREEN);
          c.setBackground(Back_Color);
         frame.setVisible(true);
         pane_text = new JPanel(new GridLayout(1, 1));
@@ -166,18 +167,19 @@ public class calculator implements ActionListener {
                     if(token.size()>=2)
                     {
                         if(token.get(token.size()-2)=="-")
-                        {
-                             token.add(token.get(token.size()-2).concat(token.getLast()));
+                        { 
+                            if(  token.size()>=3   &&  !check_int(token.get(token.size()-3))  )
+                             {token.add(token.get(token.size()-2).concat(token.getLast()));
                              token.remove(token.get(token.size()-3));
                              token.remove(token.get(token.size()-2));
-                             if(Double.valueOf(token.getLast())<0)
-                             {
-                                String  s=token.getLast();
-                                token.removeLast();
-                                token.add("+");
-                                token.add(s);
-
                              }
+                             if(token.size()==2)
+                             {
+                                token.add(token.get(token.size()-2).concat(token.getLast()));
+                             token.remove(token.get(token.size()-3));
+                             token.remove(token.get(token.size()-2));
+                             }
+                            
                         }
 
                     }
@@ -222,6 +224,22 @@ public class calculator implements ActionListener {
                     token.add(add);
          
                 }
+                if(check(special_op, token.getLast()) && token.size()>=3)
+                {   if(check_int(token.get(token.size()-3)) && token.get(token.size()-4)=="-" )
+                    {  
+                    int num=Integer.valueOf(token.get(token.size()-3));
+                     String special=token.getLast();
+                      token.add("+");
+                      token.add(Double.toString(num*-1));
+                      token.add("x");
+                      token.add(special);
+                      token.remove(token.size()-8);
+                      token.remove(token.size()-7);
+                      token.remove(token.size()-6);
+                      token.remove(token.size()-5);
+
+                    }
+                }
                 if(token.getLast()=="pi")
                 {
                     token.removeLast();
@@ -234,24 +252,9 @@ public class calculator implements ActionListener {
                     token.add(Double.toString(Math.E));
     
                 }
-                if(check(special_op, token.getLast()) && token.size()>=3)
-                {   if(check_int(token.get(token.size()-3)) && token.get(token.size()-2)=="-" )
-                    {  
-                    String num=token.get(token.size()-3);
-                     String special=token.getLast();
-                      token.add(num);
-                      token.add("+");
-                      token.add("-1");
-                      token.add("x");
-                      token.add(special);
-                      token.remove(token.size()-8);
-                      token.remove(token.size()-7);
-                      token.remove(token.size()-6);
-
-                    }
-                }
                 
-    
+                
+                 
                 
               System.out.println(token);
 
@@ -269,14 +272,18 @@ public class calculator implements ActionListener {
          //solution button
         if (source == number_button[28]) {
             operations operations = new operations(token);
-      
- 
-           final_ans = operations.answer;
+           if(operations.error)
+           {
+
+            writing_pane.setText("SYNTAX ERROR");
+           }
+         else
+          { final_ans = operations.answer;
             memory = final_ans;
             writing_pane.setText(Double.toString(final_ans));
             token.clear();
             display_clear = true;
-
+          }
         }
         if(source==number_button[29])
         {

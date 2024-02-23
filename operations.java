@@ -2,9 +2,10 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class operations {
-  boolean error;
+  boolean error=false;
   String operators[] = { "+", "-", "x", "/", "(", ")","^" };
   String trig[] = { "sin", "cos", "tan","sqrt","!","log","1/","asin","acos","atan","pi"};
+
 
   ArrayList<String> arithmetic = new ArrayList<String>();
   Double answer;
@@ -71,7 +72,7 @@ public class operations {
 
   }catch(Exception operation_Exception)
   {
-    System.out.println("SYNTAX ERROR");
+    error=true;
   }
 
     return ans;
@@ -121,9 +122,9 @@ public class operations {
 
     }
   }
-  catch(Exception trigException)
+  catch(Exception e)
   {
-    System.out.println("syntax error");
+    error=true;
   }
     return ans;
   }
@@ -170,7 +171,8 @@ public class operations {
       if (!check(operators, integer.get(i)) && !check(trig, integer.get(i))) {
         tempStack.push(integer.get(i));
       } else {
-        if (check(trig, integer.get(i))) {
+        try
+      {  if (check(trig, integer.get(i))) {
          
           String num1 = tempStack.pop();
           tempStack.push(Double.toString(trig(integer.get(i), num1)));
@@ -181,7 +183,11 @@ public class operations {
           String num2 = tempStack.pop();
           tempStack.push(Double.toString(equal_to(integer.get(i), num2, num1)));
         }
-       
+      }
+      catch(Exception e)
+      {
+        error=true;
+      }
       
 
       }
@@ -192,16 +198,20 @@ public class operations {
       answer = Double.valueOf(tempStack.pop());
     }
   }
- /*public static void main(String[] args) {
-    ArrayList<String> test = new ArrayList<String>();
+ public static void main(String[] args) {
+   /*   ArrayList<String> test = new ArrayList<String>();
+ 
+    test.add("45");
+    test.add("+");
     test.add("3");
     test.add("x");
-    test.add("tan");
+    test.add("3");
+    test.add("+");
     test.add("45");
 
     operations operations = new operations(test);
     System.out.println(operations.answer);
-
- }*/
+*/
+ }
 
 }
